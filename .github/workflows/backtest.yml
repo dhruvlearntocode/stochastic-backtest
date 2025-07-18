@@ -1,0 +1,31 @@
+name: Stochastic Backtest
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-backtest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Prepare data (1min → 5min)
+        run: python prepare_data.py
+
+      - name: Run stochastic backtest
+        run: python backtest_stochastic.py
+
+      - name: Upload result CSV
+        uses: actions/upload-artifact@v3
+        with:
+          name: stochastic-backtest-stats
+          path: backtest_stats.csv
